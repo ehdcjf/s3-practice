@@ -14,7 +14,20 @@ const s3 = new S3({
 })
 
 // uploads a file to s3
-function uploadFile(file) {
+//  const uploadFile = (file,tokenId,i)=>{
+//   const fileStream = fs.createReadStream(file.path)
+//   const mimetype = file.mimetype.split('/')[1];
+//   const image_num = `${i+1}`.padStart(3,'0')
+//   const uploadParams = {
+//     Bucket: bucketName,
+//     Body: fileStream,
+//     Key: `${tokenId}/image_${image_num}.${mimetype}`
+//   }
+  
+//   return s3.upload(uploadParams).promise();
+// }
+
+const uploadFile = (file) =>{
   const fileStream = fs.createReadStream(file.path)
 
   const uploadParams = {
@@ -23,18 +36,22 @@ function uploadFile(file) {
     Key: file.filename
   }
 
+  return  s3.upload(uploadParams).promise()
+}
+
+const uploadNFT = (description,files)=>{
+  const uploadParams = {
+    Bucket: bucketName,
+    Body: JSON.stringify({title:"안녕",description,files}),
+    Key: 'test.json'
+  }
   return s3.upload(uploadParams).promise()
 }
-exports.uploadFile = uploadFile
 
 
-// downloads a file from s3
-function getFileStream(fileKey) {
-  const downloadParams = {
-    Key: fileKey,
-    Bucket: bucketName
-  }
-
-  return s3.getObject(downloadParams).createReadStream()
+module.exports={
+  uploadFile,
+  uploadNFT
 }
-exports.getFileStream = getFileStream
+
+
